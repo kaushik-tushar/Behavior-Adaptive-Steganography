@@ -1,9 +1,9 @@
 import base64
 import hashlib
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
+from Cryptodome.Cipher import AES
+from Cryptodome.Util.Padding import pad, unpad
 
-# 🔐 Fixed password (can upgrade later)
+# 🔐 Fixed password (you can later make it dynamic via user input)
 SECRET_KEY = hashlib.sha256(b"default123").digest()
 
 
@@ -12,10 +12,10 @@ def encrypt_message(message):
 
     ciphertext = cipher.encrypt(pad(message.encode(), AES.block_size))
 
-    # 🔥 prepend IV with ciphertext
+    # Combine IV + ciphertext
     encrypted = cipher.iv + ciphertext
 
-    # convert to string
+    # Encode to base64 string
     return base64.b64encode(encrypted).decode()
 
 
