@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Embedding Result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<!-- CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+```
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<header class="header">
+    <h1>Embedding Successful</h1>
+    <p>Secret data has been adaptively embedded</p>
+</header>
+
+<!-- DETAILS CARD -->
+<section class="card">
+    <h2>Steganography Details</h2>
+
+    <div class="meta-grid">
+
+        <div class="meta-item">
+            <span>Risk Level</span>
+            <strong>{{ behavior.risk_level }}</strong>
+        </div>
+
+        <div class="meta-item">
+            <span>Embedding Step</span>
+            <strong>{{ metadata.embedding_step }}</strong>
+        </div>
+
+        <div class="meta-item">
+            <span>Embedded Bits</span>
+            <strong>{{ metadata.embedding_bits }}</strong>
+        </div>
+
+        <div class="meta-item">
+            <span>Image Size</span>
+            <strong>{{ metadata.image_size }}</strong>
+        </div>
+
+    </div>
+</section>
+
+<!-- IMAGE CARD -->
+<section class="card">
+    <h2>Stego Image</h2>
+
+    <div class="image-box">
+        <img src="{{ url_for('uploaded_file', filename=stego_image) }}" alt="Stego Image">
+    </div>
+
+    <a href="{{ url_for('uploaded_file', filename=stego_image) }}" download class="btn primary">
+        Download Stego Image
+    </a>
+</section>
+
+<section class="card">
+    <h2>Extract Message</h2>
+
+    <a href="{{ url_for('extract_direct', filename=stego_image) }}" class="btn primary">
+        🔍 Extract Hidden Message
+    </a>
+</section>
+
+<!-- BACK BUTTON -->
+<section class="card">
+    <a href="{{ url_for('index') }}" class="btn secondary">← Back to Dashboard</a>
+</section>
+```
+
+</div>
+
+</body>
+</html>

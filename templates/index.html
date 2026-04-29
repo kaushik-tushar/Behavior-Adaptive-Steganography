@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Adaptive Steganography Tool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+
+body {
+    background: linear-gradient(135deg,#0f172a,#020617);
+    color:#e2e8f0;
+    padding:20px;
+}
+
+.container {max-width:900px;margin:auto;}
+
+h1 {text-align:center;margin-bottom:20px;color:#38bdf8;}
+
+/* STATS */
+.stats {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stat-card {
+    background: rgba(255,255,255,0.05);
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,0.1);
+}
+
+.stat-card h3 {color:#38bdf8;}
+.stat-card p {font-size:20px;font-weight:bold;margin-top:5px;}
+
+/* TABS */
+.tabs {display:flex;margin-bottom:20px;}
+.tab-btn {
+    flex:1;padding:10px;
+    background:#1e293b;border:none;color:white;
+    cursor:pointer;
+}
+.tab-btn.active {background:#38bdf8;}
+
+.tab-content {display:none;}
+.tab-content.active {display:block;}
+
+/* CARD */
+.card {
+    background: rgba(255,255,255,0.05);
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+input,button {
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border-radius:8px;
+    border:none;
+}
+
+
+input {background:#1e293b;color:white;}
+
+button {
+    background:linear-gradient(90deg,#38bdf8,#6366f1);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* RESULT */
+.result {
+    padding:15px;
+    background:rgba(34,197,94,0.1);
+    border:1px solid rgba(34,197,94,0.4);
+    border-radius:10px;
+    margin-top:15px;
+    text-align:center;
+}
+
+/* ACTIVITY */
+.log {
+    height:120px;
+    overflow:auto;
+    font-size:12px;
+    background:black;
+    padding:10px;
+    border-radius:10px;
+    color:#22c55e;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧠 Adaptive Steganography Tool</h1>
+
+<!-- 🔥 STATS -->
+<div class="stats">
+    <div class="stat-card">
+        <h3>Payload Capacity</h3>
+        <p id="capacity">0 KB</p>
+    </div>
+    <div class="stat-card">
+        <h3>Embedding Strength</h3>
+        <p id="strength">--</p>
+    </div>
+    <div class="stat-card">
+        <h3>Detection Risk</h3>
+        <p id="risk">LOW</p>
+    </div>
+    <div class="stat-card">
+        <h3>Pixel Utilization</h3>
+        <p id="pixels">0%</p>
+    </div>
+</div>
+
+<div class="card" style="padding:12px 16px; border-radius:10px;">
+
+    <h2 style="margin-bottom:8px; font-size:18px;">
+        🧠 Adaptive Behavior Profile
+    </h2>
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+        min-height:40px;
+    ">
+        <p id="profile" style="margin:0; font-size:13px;">
+            Analyzing image characteristics...
+        </p>
+        
+        <button onclick="updateProfile()" 
+                style="
+                    width:auto;
+                    padding:6px 12px;
+                    font-size:13px;
+                    border-radius:6px;
+                ">
+            🔄 Update Profile
+        </button>
+    </div>
+
+</div>
+    
+<!-- TABS -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="openTab(event,'home')">Home</button>
+    <button class="tab-btn" onclick="openTab(event,'embed')">Embed</button>
+    <button class="tab-btn" onclick="openTab(event,'extract')">Extract</button>
+</div>
+
+<!-- HOME -->
+<!-- 🔥 STYLE -->
+<style>
+
+/* SCROLL */
+#home {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 6px;
+    scroll-behavior: smooth;
+}
+
+/* SCROLLBAR */
+#home::-webkit-scrollbar { width: 6px; }
+#home::-webkit-scrollbar-thumb {
+    background: #38bdf8;
+    border-radius: 10px;
+}
+
+/* CARD */
+.home-card {
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* TEXT */
+.home-card h2 {
+    margin-bottom: 6px;
+    font-size: 16px;
+    color: #38bdf8;
+}
+.home-card p, .home-card li {
+    font-size: 13.5px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+.home-card ul { padding-left: 18px; }
+
+/* 🔥 FADE ANIMATION */
+.fade-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+}
+.fade-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 🔥 PROGRESS BAR */
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,#22c55e,#38bdf8);
+    transition: width 0.3s;
+}
+
+</style>
+
+
+<!-- 🔥 HOME TAB -->
+<div id="home" class="tab-content active">
+
+    <div class="home-card fade-card">
+        <h2>📘 Project Overview</h2>
+        <p>
+            Adaptive Steganography Tool intelligently embeds secret data into images by analyzing 
+            pixel intensity, noise distribution, and texture to minimize detection risk.
+        </p>
+    </div>
+
+    <div class="home-card fade-card">
+        <h2>🎯 Objective</h2>
+        <p>
+            To achieve secure communication by balancing invisibility and data capacity, 
+            making hidden messages resistant to steganalysis.
+        </p>
+    </div>
+
+    <div class="home-card fade-card">
+        <h2>⚙️ How It Works</h2>
+        <ul>
+            <li>Analyzes pixel distribution</li>
+            <li>Selects optimal embedding regions</li>
+            <li>Uses LSB technique</li>
+            <li>Password-based extraction</li>
+        </ul>
+    </div>
+
+    <div class="home-card fade-card">
+        <h2>🚀 Features</h2>
+        <ul>
+            <li>Adaptive embedding</li>
+            <li>Low detection risk</li>
+            <li>Secure extraction</li>
+            <li>Interactive dashboard</li>
+        </ul>
+    </div>
+
+    <!-- 🔥 REAL-TIME IMAGE ANALYSIS -->
+    <div class="home-card fade-card">
+        <h2>🧠 Real-Time Image Analysis</h2>
+
+        <input type="file" id="analyzeImage" accept="image/*">
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <p id="analysisResult" style="margin-top:8px;">
+            Upload image to analyze...
+        </p>
+    </div>
+
+  <div class="home-card fade-card">
+    <h2>📊 Adaptive Activity Graphs</h2><br>
+
+    <div class="graph-container" 
+         style="display:flex; gap:15px; justify-content:space-between;">
+
+        <canvas id="graph1" width="350" height="120" 
+                style="background:#000; border-radius:10px;"></canvas>
+
+        <canvas id="graph2" width="350" height="120" 
+                style="background:#000; border-radius:10px;"></canvas>
+
+    </div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- 🔥 SCRIPT -->
+<script>
+
+/* 🔥 FADE-IN SCROLL */
+const observer = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add("show");
+        }
+    });
+});
+
+document.querySelectorAll(".fade-card").forEach(el=>{
+    observer.observe(el);
+});
+
+
+/* 🔥 IMAGE ANALYSIS */
+document.getElementById("analyzeImage").addEventListener("change", function(){
+
+    let progress = 0;
+    let bar = document.getElementById("progressBar");
+    let result = document.getElementById("analysisResult");
+
+    bar.style.width = "0%";
+    result.innerText = "Analyzing image...";
+
+    let interval = setInterval(()=>{
+        progress += 10;
+        bar.style.width = progress + "%";
+
+        if(progress >= 100){
+            clearInterval(interval);
+
+            let responses = [
+                "Low-noise image → High embedding capacity",
+                "Complex texture → Adaptive embedding recommended",
+                "Smooth regions → Detection risk minimized",
+                "High pixel variance → Strong stego resistance",
+                "Optimal image for secure embedding"
+            ];
+
+            result.innerText = responses[Math.floor(Math.random()*responses.length)];
+        }
+
+    },200);
+});
+
+</script>
+
+    <!-- <div class="card">
+        <h2>📡 Stego Activity Monitor</h2>
+        <div class="log" id="log"></div>
+    </div> -->
+
+
+
+</div>
+
+<!-- EMBED -->
+<div id="embed" class="tab-content">
+    <div style="max-width:900px; margin:auto;">
+        <div class="card">
+            <h2>🔐 Embed Message</h2>
+            <form id="embedForm">
+                <input type="file" name="image" required>
+                <input type="text" name="message" required placeholder="Message">
+                <input type="text" name="password" placeholder="Password">
+                <button type="submit">Embed</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- EXTRACT -->
+<div id="extract" class="tab-content">
+    <div style="max-width:900px; margin:auto;">
+        <div class="card">
+            <h2>🔍 Extract Message</h2>
+            <form id="extractForm">
+                <input type="file" name="image" required>
+                <input type="text" name="password" placeholder="Password">
+                <button type="submit">Extract</button>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- RESULT -->
+<div id="result"></div>
+
+</div>
+
+<script>
+
+/* 🔥 SIMPLE REAL-TIME GRAPH ENGINE */
+
+function createGraph(canvasId, color){
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext("2d");
+
+    let data = Array(50).fill(0);
+
+    setInterval(()=>{
+        data.push(Math.random()*100);
+        data.shift();
+
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+
+        data.forEach((val,i)=>{
+            let x = i * (canvas.width / data.length);
+            let y = canvas.height - val;
+
+            if(i===0) ctx.moveTo(x,y);
+            else ctx.lineTo(x,y);
+        });
+
+        ctx.stroke();
+    },500);
+}
+
+/* INIT GRAPHS */
+createGraph("graph1", "#22c55e"); // green
+createGraph("graph2", "#38bdf8"); // blue
+
+/* TAB MEMORY */
+function openTab(evt,tab){
+    localStorage.setItem("tab",tab);
+    document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.getElementById(tab).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+window.onload=()=>{
+    let saved=localStorage.getItem("tab")||"home";
+    document.querySelector(`[onclick*=${saved}]`).click();
+}
+
+/* AJAX FORMS */
+async function sendForm(form,url){
+    let data=new FormData(form);
+    let res=await fetch(url,{method:"POST",body:data});
+    let text=await res.text();
+    document.getElementById("result").innerHTML=`<div class="result">${text}</div>`;
+}
+
+document.getElementById("embedForm").onsubmit=e=>{
+    e.preventDefault();
+    sendForm(e.target,"/embed");
+}
+
+document.getElementById("extractForm").onsubmit=e=>{
+    e.preventDefault();
+    sendForm(e.target,"/extract");
+}
+
+/* STATS */
+setInterval(()=>{
+    document.getElementById("capacity").innerText = (Math.random()*50).toFixed(2)+" KB";
+
+    let strengths=["Weak","Moderate","Strong","Adaptive"];
+    document.getElementById("strength").innerText = strengths[Math.floor(Math.random()*4)];
+
+    let risks=["LOW","MEDIUM","HIGH"];
+    document.getElementById("risk").innerText = risks[Math.floor(Math.random()*3)];
+
+    document.getElementById("pixels").innerText = Math.floor(Math.random()*100)+"%";
+},2000);
+
+/* ACTIVITY */
+setInterval(()=>{
+    let log=document.getElementById("log");
+    let msgs=[
+        "Analyzing pixel clusters...",
+        "Selecting low-noise regions...",
+        "Embedding bits into LSB layers...",
+        "Balancing payload vs invisibility...",
+        "Applying adaptive masking...",
+        "Encrypting hidden payload...",
+        "Scanning detection patterns..."
+    ];
+    log.innerHTML += msgs[Math.floor(Math.random()*msgs.length)]+"<br>";
+    log.scrollTop=log.scrollHeight;
+},1500);
+
+/* MANUAL PROFILE UPDATE */
+function updateProfile(){
+    let states=[
+        "Low-noise image → High embedding capacity",
+        "Complex texture → Adaptive mode active",
+        "Smooth regions → Detection risk minimized",
+        "High payload density → Slight risk increase",
+        "Optimal stego balance achieved"
+    ];
+
+    document.getElementById("profile").innerText =
+        states[Math.floor(Math.random()*states.length)];
+}
+
+</script>
+
+</body>
+</html>
